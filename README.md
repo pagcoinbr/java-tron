@@ -541,4 +541,119 @@ ss -tulpn | grep java
 - Keep the system updated and secure
 - Regular backups recommended for configuration files
 
-**🎉 Congratulations!** You now have a fully functional TRON FullNode running on your Ubuntu system.
+## TRON CLI (Wallet-CLI) Installation
+
+The TRON CLI provides command-line interface for interacting with the TRON blockchain. Here's how to install and use it:
+
+### Install TRON CLI
+
+```bash
+# Clone and build wallet-cli
+cd /home/pagcoin
+git clone https://github.com/tronprotocol/wallet-cli.git
+cd wallet-cli
+./gradlew build -x test
+
+# Extract the distribution
+cd /home/pagcoin
+unzip /home/pagcoin/wallet-cli/build/distributions/wallet-1.0-SNAPSHOT.zip
+
+# Create a system-wide link (optional)
+sudo ln -sf /home/pagcoin/wallet-1.0-SNAPSHOT/bin/wallet /usr/local/bin/tron-cli
+```
+
+### Using TRON CLI
+
+#### Start the CLI Interface
+```bash
+# Using the direct path
+/home/pagcoin/wallet-1.0-SNAPSHOT/bin/wallet
+
+# Or using the system link (if created)
+tron-cli
+```
+
+#### Basic Commands
+```bash
+# Check current network
+CurrentNetwork
+
+# Generate a new address
+GenerateAddress
+
+# Get help for any command
+help SendCoin
+
+# Create/Import wallet
+RegisterWallet
+ImportWallet
+
+# Check balance
+GetBalance <address>
+
+# Send TRX
+SendCoin <to_address> <amount>
+
+# Get account info
+GetAccount <address>
+```
+
+#### CLI Command Categories
+
+| Category | Examples | Description |
+|----------|----------|-------------|
+| **Account Management** | `GetAccount`, `GetBalance`, `SendCoin` | Basic account operations |
+| **Resource Management** | `FreezeBalanceV2`, `GetAccountResource` | Energy/Bandwidth management |
+| **Smart Contracts** | `DeployContract`, `TriggerContract` | Smart contract interactions |
+| **TRC10 Tokens** | `AssetIssue`, `TransferAsset` | TRC10 token operations |
+| **Wallet Operations** | `RegisterWallet`, `ImportWallet` | Wallet management |
+| **Blockchain Data** | `GetBlock`, `GetBlockById` | Blockchain information |
+
+#### Configuration
+
+The CLI will automatically connect to TRON mainnet. To connect to your local node:
+
+```bash
+# Edit the config file (if needed)
+nano /home/pagcoin/wallet-1.0-SNAPSHOT/config.conf
+
+# Or set environment variables
+export FULL_NODE_HOST=127.0.0.1
+export FULL_NODE_PORT=8090
+```
+
+#### Example Usage Session
+
+```bash
+# Start the CLI
+tron-cli
+
+# In the CLI interface:
+wallet> RegisterWallet
+# Follow prompts to create a new wallet
+
+wallet> GetAddress
+# Shows your wallet address
+
+wallet> GetBalance
+# Shows your TRX balance
+
+wallet> help SendCoin
+# Shows help for sending TRX
+
+wallet> Exit
+# Exit the CLI
+```
+
+### Important File Locations for CLI
+
+| Component | Path |
+|-----------|------|
+| CLI Binary | `/home/pagcoin/wallet-1.0-SNAPSHOT/bin/wallet` |
+| System Link | `/usr/local/bin/tron-cli` |
+| CLI Source | `/home/pagcoin/wallet-cli/` |
+| Config File | `/home/pagcoin/wallet-1.0-SNAPSHOT/config.conf` |
+
+---
+
+**🎉 Congratulations!** You now have a fully functional TRON FullNode and CLI running on your Ubuntu system.
