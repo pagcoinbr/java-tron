@@ -1,0 +1,68 @@
+# TRON Node Data and Logs
+java-tron-1.0.0/logs/
+java-tron-1.0.0/output-directory/
+java-tron-1.0.0/gc.log*
+*.log
+
+# Node modules
+node_modules/
+npm-debug.log*
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Backup files
+*.bak
+*.backup
+*.orig
+
+# Temporary files
+*.tmp
+*.temp
+/tmp/
+
+# Apache logs (these should be in /var/log/)
+*.access.log
+*.error.log
+
+# Local environment files
+.env
+.env.local
+.env.*.local
+
+# Build directories
+dist/
+build/
+
+# Package manager files
+package-lock.json
+yarn.lock
+
+# Java compiled files
+*.class
+
+# Database files (if any)
+*.db
+*.sqlite
+
+# Compressed files
+*.zip
+*.tar.gz
+*.rar
+
+# System and hidden files
+.git/
+.gitattributes

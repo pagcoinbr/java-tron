@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRON Explorer & Wallet</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/tronweb@5.3.2/dist/TronWeb.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <h1>🚀 TRON Explorer</h1>
+            </div>
+            <div class="sync-status">
+                <span id="syncStatus" class="status">Checking...</span>
+                <div class="dot-indicator" id="syncDot"></div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+            <button class="tab-btn active" onclick="showTab('wallet')">Wallet</button>
+            <button class="tab-btn" onclick="showTab('explorer')">Explorer</button>
+            <button class="tab-btn" onclick="showTab('staking')">Staking 2.0</button>
+            <button class="tab-btn" onclick="showTab('resources')">Resources</button>
+        </nav>
+
+        <!-- Wallet Tab -->
+        <div id="wallet" class="tab-content active">
+            <div class="wallet-section">
+                <h2>Wallet Management</h2>
+                
+                <!-- Seed Phrase Section -->
+                <div class="seed-section">
+                    <div class="input-group">
+                        <label for="seedPhrase">Seed Phrase (12/24 words):</label>
+                        <textarea id="seedPhrase" placeholder="Enter your seed phrase here..." rows="3"></textarea>
+                        <div class="button-group">
+                            <button onclick="importWallet()" class="btn-primary">Import Wallet</button>
+                            <button onclick="generateWallet()" class="btn-secondary">Generate New</button>
+                            <button onclick="clearWallet()" class="btn-danger">Clear Wallet</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Info -->
+                <div class="account-info" id="accountInfo" style="display:none;">
+                    <h3>Account Information</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Address:</label>
+                            <span id="walletAddress" class="address"></span>
+                        </div>
+                        <div class="info-item">
+                            <label>TRX Balance:</label>
+                            <span id="trxBalance">0 TRX</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Energy:</label>
+                            <span id="energyBalance">0</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Bandwidth:</label>
+                            <span id="bandwidthBalance">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Token List -->
+                <div class="tokens-section" id="tokensSection" style="display:none;">
+                    <h3>Token Holdings</h3>
+                    <div id="tokenList" class="token-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Explorer Tab -->
+        <div id="explorer" class="tab-content">
+            <div class="explorer-section">
+                <h2>Blockchain Explorer</h2>
+                
+                <!-- Search Section -->
+                <div class="search-section">
+                    <div class="search-group">
+                        <input type="text" id="searchInput" placeholder="Enter block number, transaction hash, or address">
+                        <button onclick="search()" class="btn-primary">Search</button>
+                    </div>
+                </div>
+
+                <!-- Latest Blocks -->
+                <div class="blocks-section">
+                    <h3>Latest Blocks</h3>
+                    <div id="latestBlocks" class="blocks-list"></div>
+                    <button onclick="loadMoreBlocks()" class="btn-secondary">Load More</button>
+                </div>
+
+                <!-- Search Results -->
+                <div id="searchResults" class="search-results" style="display:none;"></div>
+            </div>
+        </div>
+
+        <!-- Staking 2.0 Tab -->
+        <div id="staking" class="tab-content">
+            <div class="staking-section">
+                <h2>TRON Staking 2.0</h2>
+                
+                <!-- Current Stakes -->
+                <div class="current-stakes">
+                    <h3>Your Stakes</h3>
+                    <div id="currentStakes" class="stakes-list">
+                        <p class="no-stakes">No active stakes found. Connect your wallet to view stakes.</p>
+                    </div>
+                </div>
+
+                <!-- Staking Interface -->
+                <div class="stake-interface" id="stakeInterface" style="display:none;">
+                    <div class="stake-form">
+                        <h4>Stake TRX</h4>
+                        <div class="input-group">
+                            <label>Resource Type:</label>
+                            <select id="resourceType">
+                                <option value="ENERGY">Energy</option>
+                                <option value="BANDWIDTH">Bandwidth</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Amount (TRX):</label>
+                            <input type="number" id="stakeAmount" placeholder="Amount to stake" min="1">
+                        </div>
+                        <div class="input-group">
+                            <label>Receive Address (optional):</label>
+                            <input type="text" id="receiveAddress" placeholder="Leave empty to stake for yourself">
+                        </div>
+                        <button onclick="stakeForResource()" class="btn-primary">Stake TRX</button>
+                    </div>
+
+                    <div class="unstake-form">
+                        <h4>Unstake TRX</h4>
+                        <div class="input-group">
+                            <label>Unstake Amount (TRX):</label>
+                            <input type="number" id="unstakeAmount" placeholder="Amount to unstake" min="1">
+                        </div>
+                        <button onclick="unstakeResource()" class="btn-danger">Unstake TRX</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resources Tab -->
+        <div id="resources" class="tab-content">
+            <div class="resources-section">
+                <h2>Network Resources</h2>
+                
+                <!-- Resource Overview -->
+                <div class="resource-overview">
+                    <div class="resource-card">
+                        <h3>Energy</h3>
+                        <div class="resource-stats">
+                            <div class="stat">
+                                <label>Available:</label>
+                                <span id="availableEnergy">0</span>
+                            </div>
+                            <div class="stat">
+                                <label>Total:</label>
+                                <span id="totalEnergy">0</span>
+                            </div>
+                            <div class="stat">
+                                <label>Used:</label>
+                                <span id="usedEnergy">0</span>
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" id="energyProgress"></div>
+                        </div>
+                    </div>
+
+                    <div class="resource-card">
+                        <h3>Bandwidth</h3>
+                        <div class="resource-stats">
+                            <div class="stat">
+                                <label>Available:</label>
+                                <span id="availableBandwidth">0</span>
+                            </div>
+                            <div class="stat">
+                                <label>Total:</label>
+                                <span id="totalBandwidth">0</span>
+                            </div>
+                            <div class="stat">
+                                <label>Used:</label>
+                                <span id="usedBandwidth">0</span>
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" id="bandwidthProgress"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Network Info -->
+                <div class="network-info">
+                    <h3>Network Information</h3>
+                    <div id="networkStats" class="network-stats"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display:none;">
+        <div class="spinner"></div>
+        <p>Processing...</p>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast" class="toast"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

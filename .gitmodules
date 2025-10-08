@@ -1,0 +1,3 @@
+[submodule "tronstation-sdk"]
+	path = tronstation-sdk
+	url = https://github.com/TRON-US/tronstation-sdk.git
